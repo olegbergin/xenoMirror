@@ -28,19 +28,26 @@ Build an MVP of a gamified habit tracker where the user nurtures an AI companion
 
 ### 1.4 Milestones
 
-**Version 1 (MVP) - The Target:**
+**Version 1 (MVP) - CONFIRMED SCOPE (2024-12-22):**
 
 - **3D Scene:** Floating "Rayman-style" character (Core + Head/Hands/Feet anchors) inside a 2D background.
 - **Habits:** 3 types only (Squats [Vitality], Reading [Mind], Meditation/Object [Soul]).
-- **AI Vision:** Google ML Kit implementation for Pose Detection and Image Labeling.
+- **Logging Methods:**
+  - ✅ Manual logging (buttons for quick input)
+  - ✅ AI Vision (Google ML Kit for Pose Detection and Image Labeling)
 - **Logic:** Basic XP system and "Charge Up" shader effect.
-- **Economy:** Limit AI chat to 5 messages/day per user.
+- **Data Storage:** Local-only (SharedPreferences + SQLite/Hive) - no cloud backend in MVP
+- **AI Chat:** ❌ NOT in MVP (no OpenAI integration yet, use hardcoded flavor text instead)
+- **Authentication:** ❌ NOT in MVP (single-user, local device only)
 
 **Version 2 (Future):**
 
-- Full 3D Room customization.
-- Social features (visiting friends).
-- Paid subscription (removing chat limits).
+- Cloud backend migration (Supabase)
+- AI chat with creature (OpenAI GPT-4o-mini, 5 messages/day limit)
+- User authentication
+- Full 3D Room customization
+- Social features (visiting friends)
+- Paid subscription (removing chat limits)
 
 ---
 

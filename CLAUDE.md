@@ -8,14 +8,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Core Concept:** "The Mirror Soul" - your habits feed the creature's evolution (workout → muscular legs, reading → third eye, neglect → glitchy appearance).
 
+## 🎯 MVP CRITICAL DECISIONS (2024-12-22)
+
+**These answers define the scope and priorities for MVP development:**
+
+### Question 1: MVP Feature Set
+**Included in MVP:**
+- ✅ **Visual Evolution System** - 3D creature with shader effects that change based on XP
+- ✅ **Manual Habit Logging** - User can log activities via buttons (no camera required)
+- ✅ **AI Vision Integration** - Google ML Kit for camera-based activity validation (pose detection for exercises, image labeling for objects)
+
+**NOT in MVP:**
+- ❌ AI Chat with creature (no OpenAI integration)
+- ❌ Cloud sync / Multi-device support (start local-only)
+- ❌ Social features
+
+### Question 2: Backend Infrastructure
+**Current Status:** No backend infrastructure exists yet. Just completed basic app structure and build pipeline.
+
+**MVP Approach:**
+1. **Phase 1 (Immediate):** Use local storage (SharedPreferences for simple data, SQLite/Hive for creature state)
+2. **Phase 2 (Future):** Migrate to Supabase when cloud features are needed
+
+**Rationale:** Local-first approach allows faster MVP iteration without backend complexity.
+
+### Question 3: AI Budget & Integration
+**Decision:** No OpenAI API integration in MVP
+- No chat functionality with creature
+- Use hardcoded responses or pre-written flavor text for feedback
+- Can add "Coming Soon" UI placeholder where chat would go
+
+**Future:** When budget allows, integrate GPT-4o-mini with rate limiting (5 messages/day)
+
+### MVP Development Priorities (In Order)
+1. **Data Layer:** Create local storage system for creature state (XP, body part tiers)
+2. **Habit Logging UI:** Simple buttons for 3 habit types (Vitality/Mind/Soul)
+3. **XP System Logic:** Calculate and store XP in Flutter (NOT Unity)
+4. **Unity Creature:** Build modular "Rayman-style" creature with tier system
+5. **Shader System:** Implement "Charge Up" shader that reacts to XP percentage
+6. **Flutter→Unity Bridge:** Send XP/tier data to Unity to trigger visual changes
+7. **AI Vision:** Integrate Google ML Kit for pose detection (squats) and object recognition (books)
+8. **Polish:** Smooth transitions, particle effects, satisfying feedback
+
 ## Technology Stack
 
 - **Frontend Shell:** Flutter (Dart) - handles UI, navigation, and business logic
 - **3D Rendering:** Unity 2022.3 LTS (URP) - renders creature and environment
 - **Bridge:** `flutter-unity-view-widget` (master branch from GitHub)
 - **Target Platform:** Android (ARM64/ARMv7) - requires physical device, emulators not supported
-- **Planned Backend:** Supabase + OpenAI (GPT-4o-mini) - not yet implemented
-- **Planned Vision AI:** Google ML Kit (On-device) - not yet implemented
+- **Data Storage (MVP):** Local storage (SharedPreferences + SQLite/Hive) - no cloud backend yet
+- **Vision AI (MVP):** Google ML Kit (On-device) - for pose detection and image labeling
+- **Future Backend:** Supabase (when cloud sync needed)
+- **Future AI Chat:** OpenAI GPT-4o-mini (when budget allows)
 
 ## Project Structure
 
@@ -137,11 +181,19 @@ Three attribute types will drive creature evolution:
 - Camera validation of user activities (e.g., counting squats)
 - Manual logging fallback option
 
-### Backend Integration
+### Data Persistence (MVP: Local-First)
+**Current Approach (MVP):**
+- Local storage using SharedPreferences (simple key-value data)
+- SQLite or Hive for structured creature state data
+- No authentication required for MVP
+- All data stays on device
+
+**Future Backend Migration:**
 - Supabase Auth (Email/Password)
 - PostgreSQL schema: `users`, `creature_state`, `daily_usage`
 - Row Level Security (RLS) for user data isolation
-- Supabase Edge Functions for OpenAI API calls (rate limited to 5 messages/day in MVP)
+- Supabase Edge Functions for OpenAI API calls (rate limited to 5 messages/day)
+- Migration path: export local data → import to Supabase on first cloud sync
 
 ### Visual Style
 - "Rayman Architecture" - floating body parts to avoid rigging complexity
