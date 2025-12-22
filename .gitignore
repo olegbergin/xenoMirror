@@ -99,3 +99,10 @@ sysinfo.txt
 # Kotlin / Gradle logs & caches
 **/.kotlin/
 **/*.log
+
+# -----------------------
+# ENVIRONMENT VARIABLES
+# -----------------------
+.env
+.env.local
+.env.*.local
