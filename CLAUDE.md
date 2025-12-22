@@ -65,6 +65,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 D:\xenoMirror\client_app\          # Flutter project root
+├── docs/                           # Detailed technical documentation
+│   ├── .metadata.json              # Last update timestamps for /update-docs
+│   ├── architecture.md             # System design & technical decisions
+│   ├── changelog.md                # Session-based change history
+│   ├── project_status.md           # Current sprint status & next steps
+│   └── features/                   # Feature-specific documentation
+│       ├── _template.md            # Template for new feature docs
+│       └── flutter-unity-bridge.md # Current POC documentation
 ├── lib/                            # Flutter Dart code
 │   └── main.dart                   # Main entry point with Unity integration demo
 ├── unity/xeno_unity/               # Unity source project (scenes, C# scripts)
@@ -75,6 +83,9 @@ D:\xenoMirror\client_app\          # Flutter project root
 │   ├── unityLibrary/               # [GENERATED] Unity export (DO NOT EDIT MANUALLY)
 │   ├── build.gradle.kts            # Build config (NDK fixes here)
 │   └── settings.gradle.kts         # Module config (includes :unityLibrary)
+├── README.md                       # Project overview & setup guide
+├── CLAUDE.md                       # AI assistant instructions (this file)
+├── project_spec.md.md              # Product requirements document
 └── pubspec.yaml                    # Flutter dependencies
 ```
 
@@ -121,6 +132,13 @@ flutter test
 ### Build APK
 ```powershell
 flutter build apk --release
+```
+
+### Documentation Updates
+```powershell
+# User triggers manually when docs need refresh
+# This analyzes recent commits and updates docs/ accordingly
+/update-docs
 ```
 
 ## Architecture Principles
@@ -202,5 +220,74 @@ Three attribute types will drive creature evolution:
 ## Git Workflow Notes
 
 Current branch: `master`
-- Initial commit establishes project structure
-- Staged changes include Unity scene modifications and new ColorChanger script
+- Repository: https://github.com/olegbergin/xenoMirror
+- Follow conventional commits format when possible (feat:, fix:, docs:, etc.)
+
+## Documentation System
+
+### Automated Docs Location
+The project uses an automated documentation system in the `docs/` directory:
+
+- **`docs/architecture.md`**: Deep dive into system design, data flow, and technical decisions. Update this when you make architectural changes (new components, bridge protocol changes, major refactors).
+
+- **`docs/changelog.md`**: Human-readable session summaries. This is NOT just git history - it's a natural language changelog explaining what was accomplished each session, why decisions were made, and what blockers were encountered.
+
+- **`docs/project_status.md`**: Critical for resuming work after breaks. Contains current sprint goals, recently completed tasks, blockers, and next steps. Update at start/end of each session.
+
+- **`docs/features/`**: Individual feature documentation. Each major feature (habit logging, XP system, creature evolution, etc.) gets its own markdown file following the `_template.md` structure.
+
+### When to Update Docs
+
+**Manual trigger**: User will run `/update-docs` command when they want documentation refreshed. DO NOT auto-update without this command.
+
+**What `/update-docs` does**:
+1. Read `docs/.metadata.json` for last update timestamp
+2. Analyze git commits since last update: `git log --since=<timestamp> --oneline --name-status`
+3. Ask user for session summary ("What did you accomplish this session?")
+4. Update relevant docs:
+   - `changelog.md`: Add new session block (reverse chronological order)
+   - `project_status.md`: Move "Current Focus" to "Recently Completed", ask for new focus
+   - `architecture.md`: Only update if architectural changes detected (bridge protocol, new major components)
+   - Feature docs: Update if related files were modified (update Status + Implementation Checklist)
+
+**Detection logic**:
+- New files in `lib/` → Ask: "Should I create a feature doc for this?"
+- Changes to `main.dart` or Unity scripts → Update `architecture.md` (bridge changes likely)
+- Changes to `pubspec.yaml` (dependencies) → Update `architecture.md` (new packages section)
+- Commit messages with `feat:`, `fix:`, `docs:` → Categorize changes appropriately
+
+### Merge Strategy (Preserving Manual Edits)
+
+**Problem**: Docs may have manual edits that shouldn't be overwritten.
+
+**Solution**: Section-aware updates
+
+For `changelog.md`:
+- Always safe - just prepend new session block (reverse chronological)
+
+For `project_status.md`:
+- **Replace**: "Current Focus", "Recently Completed", "Session History" (auto-generated sections)
+- **Preserve**: "Blockers & Open Questions" (user may manually edit)
+
+For `architecture.md`:
+- Check if file modified after last auto-update (compare file mtime vs metadata timestamp)
+- If manually edited: Show diff, ask "Manual edits detected. Overwrite? (yes/no)"
+- If not: Safe to auto-update
+
+For feature docs:
+- Only update "Status" field and "Implementation Checklist" sections
+- Preserve "Known Issues", "References", and manual notes
+
+### Root Docs vs docs/ Directory
+
+**Separation of concerns**:
+- `README.md`: High-level project intro, setup instructions, "how to build" (stable, rarely changes)
+- `CLAUDE.md`: Instructions for AI assistant (build commands, coding patterns, constraints)
+- `project_spec.md.md`: Product requirements, user stories, MVP scope
+- `docs/`: Detailed technical documentation that evolves with code
+
+**When to update which**:
+- Add new build step → Update `README.md` + `CLAUDE.md`
+- Change MVP scope → Update `project_spec.md.md`
+- Implement new feature → Update `docs/features/`, possibly `docs/architecture.md`
+- Complete work session → Update `docs/changelog.md` + `docs/project_status.md`
