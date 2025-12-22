@@ -1,0 +1,101 @@
+# -----------------------
+# MISC / OS
+# -----------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+$RECYCLE.BIN/
+desktop.ini
+
+# -----------------------
+# FLUTTER / DART
+# -----------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# IDE / Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+*.ipr
+*.iws
+
+# -----------------------
+# ANDROID (Flutter Native)
+# -----------------------
+**/android/local.properties
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/gradle/wrapper/gradle-wrapper.jar
+# Keystores (Никогда не коммить ключи!)
+*.jks
+*.keystore
+*.key
+*.p12
+
+# -----------------------
+# UNITY 3D (Source Project)
+# -----------------------
+# Эти папки Unity пересоздает при запуске. В репозитории им делать нечего.
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Bb]uild/
+**/[Bb]uilds/
+**/[Ll]ogs/
+**/[Mm]emoryCaptures/
+**/[Uu]serSettings/
+
+# Visual Studio generated files (Unity C# projects)
+**/*.csproj
+**/*.unityproj
+**/*.sln
+**/*.suo
+**/*.tmp
+**/*.user
+**/*.userprefs
+**/*.pidb
+**/*.booproj
+**/*.svd
+**/.vs/
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# -----------------------
+# FLUTTER UNITY WIDGET BRIDGE (CRITICAL)
+# -----------------------
+# Мы игнорируем экспорт, так как он генерируется из исходников Unity.
+# Если закоммитить это, будут вечные конфликты в GUID-ах.
+**/android/unityLibrary/
+
+# Исключение: иногда нужно закоммитить файл .keep или специфичные настройки, 
+# но в 99% случаев эта папка должна быть в игноре.
+
+# -----------------------
+# WINDOWS / VISUAL STUDIO (Host runner)
+# -----------------------
+**/windows/flutter/ephemeral/
+**/windows/*.vcxproj.user
+**/windows/*.vcxproj.filters
+**/windows/*.aps
+**/windows/x64/
+**/windows/Debug/
+**/windows/Release/
+
+# Kotlin / Gradle logs & caches
+**/.kotlin/
+**/*.log
