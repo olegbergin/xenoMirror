@@ -4,6 +4,7 @@
 **Status:** Pre-production / Prototyping
 **Target Platform:** Android (ARM64/ARMv7)
 **Core Concept:** "The Mirror Soul" — RPG Habit Tracker with Procedural AI Evolution.
+**core library:** https://github.com/juicycleff/flutter-unity-view-widget
 
 ---
 
@@ -24,11 +25,12 @@ The creature is a **mirror of your lifestyle**:
 
 ## 2. Technical Architecture (New)
 
-Мы отказались от Docker в пользу нативной разработки под Windows, чтобы избежать проблем с `il2cpp.exe` и драйверами GPU.
+Мы отказались от Docker для разработки в пользу нативной разработки под Windows, чтобы избежать проблем с `il2cpp.exe` и драйверами GPU.
+бэкенд желательно собрать в контейнер
 
 ### 2.1 Структура Папок
 
-Проект организован так, чтобы плагин `flutter_unity_widget` мог автоматически находить исходники.
+Проект организован так, чтобы плагин `flutter-unity-view-widget` мог автоматически находить исходники.
 
 ```text
 D:\xenoMirror\
@@ -50,7 +52,7 @@ D:\xenoMirror\
 
 - **App UI:** Flutter (Dart) — Оболочка, интерфейс, навигация.
 - **3D Core:** Unity 2022.3 LTS (URP) — Рендер существа и окружения.
-- **Bridge:** `flutter_unity_widget` (master branch).
+- **Bridge:** `flutter-unity-view-widget` (master branch).
 - **Vision AI:** Google ML Kit (On-device).
 - **Backend:** Supabase + OpenAI (GPT-4o-mini).
 
@@ -67,7 +69,7 @@ D:\xenoMirror\
 
 3. **Android Studio:**
 
-- SDK Platform: Android 13+ (API 33+).
+- SDK Platform: (API 24+).
 - SDK Tools: **Android SDK Command-line Tools**.
 - **NDK (Critical):** Требуется установка двух версий (Side-by-side):
 - `23.1.7779620` (Для Unity IL2CPP).
@@ -80,11 +82,7 @@ D:\xenoMirror\
 ### Step 1: Подготовка Unity (Ядро)
 
 1. Открыть проект `client_app/unity/xeno_unity` в Unity Hub (2022.3 LTS).
-2. Перейти в **File -> Build Settings**.
-3. Платформа: **Android**.
-4. Галочка **Export Project**: [x] **ВКЛЮЧЕНА**.
-5. Нажать **Export**.
-6. Путь экспорта: `client_app/android`.
+2. нажать на отприсовануб плагином опцию Export Android (debug)
 
 - _Unity создаст или обновит папку `unityLibrary` внутри `android`._
 
@@ -111,30 +109,7 @@ flutter run
 
 ---
 
-## 5. Communication Bridge (Связь)
-
-### Flutter (Отправка)
-
-```dart
-// Отправляет сообщение объекту "Cube" вызвать метод "ChangeColor" с аргументом "red"
-_unityWidgetController?.postMessage('Cube', 'ChangeColor', 'red');
-
-```
-
-### Unity (Прием)
-
-Скрипт должен висеть на объекте, имя которого совпадает с первым аргументом в `postMessage`.
-
-```csharp
-public void ChangeColor(string message) {
-    if (message == "red") GetComponent<Renderer>().material.color = Color.red;
-}
-
-```
-
----
-
-## 6. Game Mechanics & Lore
+## 6. Game Mechanics & Lore (not final)
 
 ### 6.1 Narrative
 

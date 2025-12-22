@@ -11,67 +11,80 @@ class XenoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'XenoMirror',
-      theme: ThemeData.dark(), // Темная тема для киберпанка
-      home: const UnityScreen(),
+      debugShowCheckedModeBanner: false,
+      home: const UnityControlScreen(),
     );
   }
 }
 
-class UnityScreen extends StatefulWidget {
-  const UnityScreen({super.key});
+class UnityControlScreen extends StatefulWidget {
+  const UnityControlScreen({super.key});
 
   @override
-  State<UnityScreen> createState() => _UnityScreenState();
+  State<UnityControlScreen> createState() => _UnityControlScreenState();
 }
 
-class _UnityScreenState extends State<UnityScreen> {
+class _UnityControlScreenState extends State<UnityControlScreen> {
   UnityWidgetController? _unityWidgetController;
 
-  @override
-  void dispose() {
-    _unityWidgetController?.dispose();
-    super.dispose();
+  // Этот метод вызывается, когда Unity готова к работе
+  void _onUnityCreated(controller) {
+    _unityWidgetController = controller;
+    print("Unity Controller Attached");
+  }
+
+  // Главная функция "выстрела" в Unity
+  void _sendCommand(String color) {
+    if (_unityWidgetController != null) {
+      // 1. Имя объекта в иерархии Unity (Cube)
+      // 2. Имя метода в C# скрипте (SetColor)
+      // 3. Аргумент (red / blue)
+      _unityWidgetController?.postMessage('Cube', 'SetColor', color);
+      print("Command sent: $color");
+    } else {
+      print("Error: Controller is null");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("XenoMirror Protocol")),
+      appBar: AppBar(title: const Text('XenoMirror: Link Test')),
       body: Stack(
         children: [
-          // Слой 1: Unity (Фон)
+          // Слой 1: Окно в Unity
           UnityWidget(
             onUnityCreated: _onUnityCreated,
-            useAndroidViewSurface: true, // ВАЖНО для Android
-            borderRadius: BorderRadius.circular(20.0),
+            useAndroidViewSurface:
+                true, // Критично для корректного рендера на Android
+            borderRadius: BorderRadius.zero,
           ),
-          
-          // Слой 2: Flutter UI (Поверх Unity)
+
+          // Слой 2: Flutter UI поверх Unity
           Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: Card(
-              color: Colors.black54,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Status: Connection Established",
-                  style: TextStyle(color: Colors.greenAccent),
-                  textAlign: TextAlign.center,
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton.extended(
+                  onPressed: () => _sendCommand('red'),
+                  backgroundColor: Colors.red,
+                  label: const Text("Make RED"),
+                  icon: const Icon(Icons.colorize),
                 ),
-              ),
+                FloatingActionButton.extended(
+                  onPressed: () => _sendCommand('blue'),
+                  backgroundColor: Colors.blue,
+                  label: const Text("Make BLUE"),
+                  icon: const Icon(Icons.colorize),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
-  }
-
-  // Callback, когда Unity загрузилась
-  void _onUnityCreated(UnityWidgetController controller) {
-    _unityWidgetController = controller;
-    print("Unity loaded successfully");
   }
 }
