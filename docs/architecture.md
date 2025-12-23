@@ -121,6 +121,42 @@ XenoApp (MaterialApp)
     └── EvolutionHistory (Timeline of mutations)
 ```
 
+### UI/UX Design System (Phase 2 - In Progress)
+
+**Design Specification**: `docs/reference_design_document.md` v1.0.0
+
+**Visual Philosophy**: "XenoMirror OS" - A sci-fi containment interface (HUD-style)
+
+**Key Constraints**:
+- MUST NOT use standard Material Design components (ElevatedButton, FloatingActionButton, LinearProgressIndicator)
+- MUST use custom "Protocol Button" (rectangular, neon borders, glow effects)
+- MUST layer UI as Stack: UnityWidget → Vignette → HUD
+- MUST keep center viewport empty (creature spotlight)
+
+**Color System**:
+- Defined in `lib/core/theme/app_colors.dart`
+- Cyberpunk/Neon palette ("Cipher_01")
+- Three attribute colors: Vitality (#00FF41), Mind (#00F3FF), Soul (#BC13FE)
+
+**Component Library** (planned):
+```
+lib/presentation/
+├── widgets/
+│   ├── protocol_button.dart      # Custom neon-bordered button
+│   ├── bio_meter.dart             # Segmented progress bar with glitch effect
+│   ├── injection_panel.dart      # Modal bottom sheet for habit logging
+│   └── hud_overlay.dart           # Vignette + top/bottom bars
+└── theme/
+    ├── app_colors.dart            # Design spec hex codes as constants
+    ├── app_text_styles.dart       # Monospace headers + sans-serif body
+    └── app_theme.dart             # ThemeData config
+```
+
+**Design Validation**:
+- Automated checks run during `/update-docs`
+- Design Compliance Score: 0-100 (target: 80+)
+- Metrics: Color palette, component types, Stack structure, haptics, typography
+
 ---
 
 ## 3. Unity Layer Architecture

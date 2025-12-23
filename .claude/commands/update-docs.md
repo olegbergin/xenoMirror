@@ -61,6 +61,70 @@ Run automated validation checks and capture results:
 
 5. **Format timestamp**: Get current UTC timestamp for "Last checked"
 
+### Step 4.5: Design Validation (Phase 2 - UI/UX Implementation)
+
+**ONLY run if Flutter UI files changed** (detect changes in `lib/presentation/`, `lib/widgets/`, or files with `Widget` suffix)
+
+Run automated design compliance checks:
+
+1. **Color Palette Validation** (0-20 points):
+   ```bash
+   # Search for Material color usage
+   rg --type dart 'Colors\.' lib/presentation lib/widgets 2>&1 | grep -v 'Colors.transparent'
+   # Search for inline color definitions
+   rg --type dart 'Color\(0x' lib/presentation lib/widgets 2>&1
+   ```
+   - Flag any Material colors (Colors.blue, Colors.red) that aren't custom constants
+   - Check if colors defined in `lib/core/theme/app_colors.dart` match design spec hex codes
+   - Scoring: 20 points baseline, -2 per violation
+   - Extract: Count of non-compliant color references
+
+2. **Component Type Validation** (0-20 points):
+   ```bash
+   # Search for prohibited Material widgets
+   rg --type dart '(FloatingActionButton|ElevatedButton|OutlinedButton|LinearProgressIndicator|AppBar)' lib/presentation lib/widgets 2>&1
+   ```
+   - Flag usage of standard Material buttons (should be custom Protocol Buttons)
+   - Flag standard progress indicators (should be Bio-Meters)
+   - Scoring: 20 points baseline, -5 per prohibited widget
+   - Extract: Count of prohibited widget types
+
+3. **Stack Layer Validation** (0-20 points):
+   ```bash
+   # Find HomePage/MainScreen and check Stack structure
+   rg --type dart 'Stack\(' lib/presentation/home 2>&1
+   ```
+   - Verify UnityWidget is first child (bottom layer)
+   - Check for vignette overlay (RadialGradient or similar)
+   - Scoring: 20 if correct structure found, 0 if wrong
+   - Extract: Pass/Fail on correct z-order
+
+4. **Haptics Validation** (0-20 points):
+   ```bash
+   # Count interactions with haptics
+   total_interactions=$(rg --type dart 'on(Pressed|Tap|LongPress):' lib/presentation lib/widgets -c 2>&1 | awk '{s+=$1} END {print s}')
+   haptic_count=$(rg --type dart 'on(Pressed|Tap|LongPress):' lib/presentation lib/widgets -A 3 2>&1 | grep -c 'HapticFeedback')
+   ```
+   - Count interactions with haptics vs total interactions
+   - Scoring: (haptic_count / total_interactions) * 20
+   - Extract: Haptics coverage percentage
+
+5. **Typography Validation** (0-20 points):
+   ```bash
+   # Check for text style definitions
+   rg --type dart 'TextStyle|fontFamily' lib/core/theme 2>&1
+   ```
+   - Verify monospace font defined for headers
+   - Check for ALL CAPS transformation on labels
+   - Scoring: 20 if fonts defined correctly, 0 if missing
+   - Extract: Pass/Fail on font definitions
+
+6. **Calculate Design Compliance Score**:
+   - Sum of all 5 checks (0-100 total)
+   - Target: 80+ points for Phase 2 compliance
+
+7. **Format timestamp**: Get current UTC timestamp for "Last design validation"
+
 ### Step 5: Update Documentation Files
 
 #### `docs/changelog.md` (Always update)
@@ -101,6 +165,31 @@ Run automated validation checks and capture results:
   - [ ] CI/CD pipeline (Future: Phase 2)
   ```
 
+- **NEW (Phase 2)**: Add/Update "🎨 Design Compliance" section after "Validation Health":
+
+  ```markdown
+  ## 🎨 Design Compliance (Phase 2)
+
+  Last validated: [TIMESTAMP from Step 4.5]
+
+  | Metric | Score | Status | Issues |
+  |--------|-------|--------|--------|
+  | **Color Palette** | [X/20] | ✅ Pass / ⚠️ Warning / ❌ Fail | [N violations] - See details |
+  | **Component Types** | [X/20] | ✅ Pass / ⚠️ Warning / ❌ Fail | Found: FloatingActionButton (use Protocol Button) |
+  | **Stack Structure** | [X/20] | ✅ Pass / ❌ Fail | Unity layer must be first child |
+  | **Haptics Coverage** | [X/20] | [XX%] | [N/M interactions] have haptic feedback |
+  | **Typography** | [X/20] | ✅ Pass / ❌ Fail | Missing monospace font definition |
+  | **Design Compliance Score** | [XX/100] | Target: 80+ for Phase 2 | |
+
+  **Design Spec Version**: v1.0.0 (`docs/reference_design_document.md`)
+
+  **Critical Issues**:
+  - [ ] Issue 1: Non-compliant color usage in `lib/presentation/home/home_page.dart` (line 45)
+  - [ ] Issue 2: Using Material FloatingActionButton instead of Protocol Button
+
+  **Reference**: See `docs/reference_design_document.md` for full UI specification.
+  ```
+
 #### `docs/architecture.md` (Only if architectural changes detected)
 - Detect changes to: `main.dart`, `*.cs`, `pubspec.yaml`, new directories in `lib/`
 - Check if file was manually edited (compare file mtime vs last metadata timestamp)
@@ -121,9 +210,15 @@ Run automated validation checks and capture results:
      "last_updated": "YYYY-MM-DDTHH:mm:ssZ",
      "last_commit": "commit_hash",
      "validation_last_checked": "YYYY-MM-DDTHH:mm:ssZ",
-     "agent_ready_score": 75
+     "agent_ready_score": 75,
+     "design_spec_version": "1.0.0",
+     "design_last_validated": "YYYY-MM-DDTHH:mm:ssZ",
+     "design_compliance_score": 0
    }
    ```
+   - `design_spec_version`: Current version from `reference_design_document.md` header
+   - `design_last_validated`: Timestamp from Step 4.5 (only if design validation ran)
+   - `design_compliance_score`: 0-100 score from Step 4.5 (only if design validation ran)
 
 ## Detection Logic
 
@@ -148,12 +243,38 @@ Use commit message prefixes:
 - `test:` → Testing
 - `chore:` → Build/dependencies
 
+### Design Validation Triggers
+
+Run design validation (Step 4.5) if ANY of these conditions are true:
+
+**File Path Triggers**:
+- Changes detected in `lib/presentation/`
+- Changes detected in `lib/widgets/`
+- New files created with `*_page.dart`, `*_screen.dart`, or `*_widget.dart` suffix
+- Changes to `lib/core/theme/` files
+
+**Commit Message Triggers**:
+- Commit contains `ui:`, `design:`, `style:`, or `theme:` prefix
+- Commit message contains keywords: "button", "color", "widget", "screen", "page"
+
+**Dependency Triggers**:
+- Changes to `pubspec.yaml` that add UI packages (e.g., google_fonts, flutter_svg)
+
+**Skip Conditions** (do NOT run design validation):
+- Only changes in `lib/data/`, `lib/domain/`, or `unity/` directories
+- Commit message contains `[skip-design]` flag
+- Only documentation files changed (*.md)
+
 ## Merge Strategy (Important!)
 
 **Always preserve manual edits:**
 - `changelog.md`: Safe to prepend (never overwrites)
-- `project_status.md`: Only replace "Current Focus" and "Recently Completed"
+- `project_status.md`: Only replace "Current Focus", "Recently Completed", and "Design Compliance" sections
 - `architecture.md`: Ask before overwriting if manually edited
+- `reference_design_document.md`: **READ-ONLY for /update-docs** - only update metadata fields
+  - Auto-update: "Last Updated" timestamp, "Compatibility" version reference
+  - Preserve: All design content (user manually versions this document)
+  - If manual edits detected: Show message "Design spec modified. Please update version number in header."
 - Feature docs: Only touch "Status" and "Implementation Checklist"
 
 ## Example Session

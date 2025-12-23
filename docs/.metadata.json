@@ -3,5 +3,8 @@
   "last_commit": "62e0835",
   "architecture": "2025-12-23T17:34:35Z",
   "changelog": "2025-12-23T17:34:35Z",
-  "project_status": "2025-12-23T17:34:35Z"
+  "project_status": "2025-12-23T17:34:35Z",
+  "design_spec_version": "1.0.0",
+  "design_last_validated": null,
+  "design_compliance_score": null
 }
