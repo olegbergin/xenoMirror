@@ -1,7 +1,7 @@
 # XenoMirror System Architecture
 
-**Last Updated**: 2025-12-22
-**Version**: 0.1.0 (MVP Phase)
+**Last Updated**: 2024-12-23
+**Version**: 0.3.0 (MVP Phase - Phase 1 Data Layer Complete)
 
 ---
 
@@ -35,23 +35,36 @@ XenoMirror is a hybrid Flutter + Unity application where:
 - **Unity**: 2022.3 LTS (URP)
 - **Bridge**: `flutter-unity-view-widget` (master branch from GitHub)
 - **Target Platform**: Android ARM64/ARMv7 (physical devices only, no emulators)
-- **Backend**: Supabase (PostgreSQL + PostgREST + GoTrue + Storage)
+- **Local Storage (MVP - ✅ Implemented)**: Hive ^2.2.3
+  - `hive_flutter: ^1.1.0` - Flutter integration
+  - `uuid: ^4.5.1` - Unique ID generation
+  - `hive_generator: ^2.0.1` - Code generation for type adapters
+  - `build_runner: ^2.4.13` - Build tool
+  - **3 Hive boxes**: creature_state, habit_logs, app_settings
+- **State Management (Planned)**: flutter_bloc + equatable
+- **Backend (Available)**: Supabase (PostgreSQL + PostgREST + GoTrue + Storage)
   - **Development**: Local instance via Docker (http://127.0.0.1:54321)
   - **Production**: Cloud instance (future migration)
+  - **Status**: Initialized but not actively used (local-first MVP approach)
 - **Environment Config**: `flutter_dotenv` for .env file management
-- **Vision AI (MVP)**: Google ML Kit (On-device)
+- **Vision AI (Planned)**: Google ML Kit (On-device)
 - **Future AI Chat**: OpenAI GPT-4o-mini
 
 ---
 
 ## 2. Flutter Layer Architecture
 
-### Current Implementation (v0.2.0)
+### Current Implementation (v0.3.0 - Phase 1 Complete)
+
+#### App Initialization Flow
 ```
 main() async
 ├── WidgetsFlutterBinding.ensureInitialized()
 ├── dotenv.load() - Load .env file
-├── Supabase.initialize() - Connect to backend
+├── Hive.initFlutter() - Initialize Hive
+├── Hive.registerAdapter(...) - Register type adapters (4 types)
+├── LocalDataSource.init() - Open Hive boxes
+├── Supabase.initialize() - Connect to backend (available but not used)
 └── runApp(XenoApp)
 
 XenoApp (MaterialApp)
@@ -60,11 +73,36 @@ XenoApp (MaterialApp)
     └── FloatingActionButtons (Demo: Red/Blue color commands)
 ```
 
-**Key files**:
-- `lib/main.dart` - Main entry point, Supabase initialization, UnityControlScreen demo
-- `lib/config/supabase_config.dart` - Configuration reading from .env
-- `lib/core/supabase_client.dart` - Global Supabase client accessor
-- `.env` - Environment variables (NOT in git, use .env.example as template)
+#### Clean Architecture Folder Structure
+```
+lib/
+├── main.dart                          # Entry point, initialization
+├── config/
+│   └── supabase_config.dart           # Environment config
+├── core/                              # Cross-cutting concerns
+│   ├── constants/
+│   │   └── xp_constants.dart          # ✅ XP thresholds, progression
+│   └── supabase_client.dart           # Global Supabase accessor
+├── data/                              # Data layer
+│   ├── models/                        # ✅ Hive models
+│   │   ├── creature_state.dart        # CreatureState + adapter
+│   │   ├── creature_state.g.dart      # Generated
+│   │   ├── habit_entry.dart           # HabitEntry + enums + adapter
+│   │   └── habit_entry.g.dart         # Generated
+│   ├── datasources/
+│   │   └── local_data_source.dart     # ✅ Hive CRUD operations
+│   └── repositories/                  # ✅ Repository implementations
+│       ├── creature_repository.dart
+│       └── habit_repository.dart
+├── domain/                            # Business logic layer
+│   └── repositories/                  # ✅ Repository interfaces
+│       ├── i_creature_repository.dart
+│       └── i_habit_repository.dart
+└── presentation/                      # UI layer (planned)
+    ├── home/
+    ├── habit_logging/
+    └── creature_detail/
+```
 
 **State management** (current): StatefulWidget with local state
 **State management** (planned): BLoC pattern for XP system, creature state
@@ -268,29 +306,64 @@ User Action (Squats)
   → Unity: If tier up, trigger evolution animation
 ```
 
-### Data Models (Planned)
+### Data Models (✅ Implemented - Phase 1)
 
-**Creature State** (persisted locally):
+**Creature State** (Hive box: `creature_state`):
 ```dart
-class CreatureState {
-  int xpVitality;    // 0-1000+ (Legs & Core)
-  int xpMind;        // 0-1000+ (Head & Sensors)
-  int xpSoul;        // 0-1000+ (Arms & Aura)
-  int legsTier;      // 0-3 (visual tier)
-  int headTier;      // 0-3
-  int armsTier;      // 0-3
-  DateTime lastUpdated;
+@HiveType(typeId: 0)
+class CreatureState extends HiveObject {
+  @HiveField(0) int xpVitality;      // 0-9999 (Legs & Core)
+  @HiveField(1) int xpMind;          // 0-9999 (Head & Sensors)
+  @HiveField(2) int xpSoul;          // 0-9999 (Arms & Aura)
+  @HiveField(3) int legsTier;        // 0-3 (visual tier)
+  @HiveField(4) int headTier;        // 0-3
+  @HiveField(5) int armsTier;        // 0-3
+  @HiveField(6) DateTime createdAt;
+  @HiveField(7) DateTime lastUpdated;
+  @HiveField(8) String creatureName; // Default: 'The Mimic'
+
+  // Helper getters
+  double get vitalityProgress => XpConstants.calculateProgress(xpVitality, legsTier);
+  double get mindProgress => XpConstants.calculateProgress(xpMind, headTier);
+  double get soulProgress => XpConstants.calculateProgress(xpSoul, armsTier);
 }
 ```
 
-**Habit Entry** (persisted locally):
+**Habit Entry** (Hive box: `habit_logs`):
 ```dart
-class HabitEntry {
-  String habitType;      // 'vitality', 'mind', 'soul'
-  String activity;       // 'squats', 'reading', 'meditation'
-  int xpEarned;
-  DateTime timestamp;
-  String validationMethod; // 'manual', 'camera'
+@HiveType(typeId: 1)
+class HabitEntry extends HiveObject {
+  @HiveField(0) String id;                    // UUID
+  @HiveField(1) HabitType habitType;          // enum: VITALITY, MIND, SOUL
+  @HiveField(2) String activity;              // 'squats', 'reading', etc.
+  @HiveField(3) int xpEarned;
+  @HiveField(4) DateTime timestamp;
+  @HiveField(5) ValidationMethod validationMethod; // enum: MANUAL, CAMERA
+  @HiveField(6) Map<String, dynamic>? metadata;    // Optional: reps, duration
+}
+
+@HiveType(typeId: 2)
+enum HabitType { vitality, mind, soul }
+
+@HiveType(typeId: 3)
+enum ValidationMethod { manual, camera }
+```
+
+**XP Constants** (Polynomial progression):
+```dart
+class XpConstants {
+  static const int tier1Threshold = 100;   // Tier 0 → 1
+  static const int tier2Threshold = 400;   // Tier 1 → 2 (cumulative)
+  static const int tier3Threshold = 1000;  // Tier 2 → 3 (cumulative)
+
+  static const Map<String, int> activityXP = {
+    'squats': 10,      // Per 10 squats
+    'reading': 15,     // Per 15 minutes
+    'meditation': 10,  // Per 10 minutes
+    // ... etc
+  };
+
+  static const double cameraValidationBonus = 1.5; // +50% XP
 }
 ```
 
@@ -389,29 +462,34 @@ Flutter Chat UI
 
 ## 9. Technical Debt & Current Limitations
 
-### Current Status: Proof-of-Concept Only
-- Only 1 Flutter file (`lib/main.dart`) and 1 Unity script (`ColorChanger.cs`)
-- No data persistence yet
-- No XP system yet
-- No modular creature - just a cube demo
+### Current Status: Phase 1 Complete (Data Layer)
+- ✅ Data persistence implemented (Hive)
+- ✅ XP system designed (polynomial progression curve)
+- ✅ Repository pattern with Clean Architecture
+- ✅ Type-safe models with code generation
+- ⏳ UI layer (presentation) not started
+- ⏳ BLoC state management not integrated
+- ⏳ Unity creature - still using cube demo
+
+### Architectural Decisions Completed
+- ✅ **Hive chosen** for local storage (over SQLite)
+  - Rationale: Faster for simple key-value operations, less boilerplate
+  - Migration path: Repository pattern enables future Supabase switch
+
+- ✅ **Polynomial XP curve** (100/400/1000 thresholds)
+  - Rationale: Balanced progression - quick early wins, sustainable mid-game
 
 ### Architectural Decisions Pending
-- [ ] **Hive vs SQLite** for local storage
-  - Hive: Simple key-value, faster for simple queries
-  - SQLite: Complex queries, better for relational data
-  - **Decision needed by**: Before implementing data layer
-
-- [ ] **BLoC library choice** (flutter_bloc vs provider vs riverpod)
-  - Leaning toward flutter_bloc (standard for complex state)
-
-- [ ] **3D modeling tool** (Blender? Other free options?)
-  - Blender: Free, powerful, steep learning curve
-  - Vectary: Browser-based, easier learning curve
+- [ ] **BLoC library** - flutter_bloc recommended (standard for complex state)
+- [ ] **3D modeling tool** - Blender vs Sketchfab assets vs Vectary
+- [ ] **UI theme** - Color palette, typography, component library
+- [ ] **Navigation pattern** - Bottom nav vs drawer vs tab bar
 
 ### Known Limitations
 - Unity is constrained to "dumb renderer" role (no business logic allowed in C#)
 - Bridge is one-way (Unity → Flutter callbacks not implemented yet)
 - Physical Android device required (no emulator support)
+- No unit tests yet (test coverage: 0%)
 
 ---
 

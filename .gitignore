@@ -30,6 +30,11 @@ build/
 *.iml
 *.ipr
 *.iws
+settings.local.json
+
+# Claude Code settings (local user preferences)
+.claude/settings.local.json
+.claude/plans/
 
 # -----------------------
 # ANDROID (Flutter Native)

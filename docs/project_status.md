@@ -7,13 +7,17 @@
 ---
 
 ## 🎯 Current Focus (This Session)
-- [ ] Design PostgreSQL schema for creature_state table (xp, tiers, timestamps)
-- [ ] Design PostgreSQL schema for habit_logs table (activity, xp_earned, validation_method)
-- [ ] Create initial Supabase migrations (SQL files)
-- [ ] Test migrations with `supabase db reset`
-- [ ] Document schema decisions in architecture.md
+- [ ] Design UX/UI for main app screens (home, habit logging, creature detail)
+- [ ] Create Flutter widget structure and navigation flow
+- [ ] Design visual theme (colors, typography, spacing)
+- [ ] Implement home screen with Unity viewer + overlay UI
+- [ ] Create habit logging screen with manual input forms
 
 ## ✅ Recently Completed (Last 3 Sessions)
+- ✅ **Phase 1 Data Layer** (Hive models, repositories, XP constants, local storage complete)
+- ✅ **Architecture Design** (Clean Architecture + BLoC pattern planned)
+- ✅ **XP Progression System** (Polynomial curve: 100/400/1000 thresholds)
+- ✅ **Repository Pattern** (Interfaces + implementations for future Supabase migration)
 - ✅ **Local Supabase integration** (Docker, environment-based config, .env setup)
 - ✅ **Created `/update-docs` command** (automated documentation workflow)
 - ✅ **Documentation system** (architecture, changelog, project_status, feature templates)
@@ -22,8 +26,8 @@
 - ✅ MVP scope defined (local-first, Google ML Kit vision, no AI chat)
 
 ## 🚧 In Progress
-- **Database Schema Design**: Defining PostgreSQL tables for creature state and habit logs
-- **Supabase Backend**: Local instance running, schema design next
+- **UX/UI Design**: Designing app screens and navigation flow
+- **Data Layer**: Complete and ready for use (Phase 1 done)
 
 ## 🔜 Next Up (Priority Order)
 1. **Complete Documentation System** (1 hour)
