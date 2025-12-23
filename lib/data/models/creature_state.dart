@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../core/constants/xp_constants.dart';
+import 'package:client_app/core/constants/xp_constants.dart';
 
 part 'creature_state.g.dart';
 

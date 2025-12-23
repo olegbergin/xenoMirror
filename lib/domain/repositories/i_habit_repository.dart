@@ -1,4 +1,4 @@
-import '../../data/models/habit_entry.dart';
+import 'package:client_app/data/models/habit_entry.dart';
 
 /// Repository interface for habit logging and history.
 ///

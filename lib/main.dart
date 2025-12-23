@@ -3,10 +3,10 @@ import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'config/supabase_config.dart';
-import 'data/models/creature_state.dart';
-import 'data/models/habit_entry.dart';
-import 'data/datasources/local_data_source.dart';
+import 'package:client_app/config/supabase_config.dart';
+import 'package:client_app/data/models/creature_state.dart';
+import 'package:client_app/data/models/habit_entry.dart';
+import 'package:client_app/data/datasources/local_data_source.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized
@@ -24,13 +24,13 @@ void main() async {
   Hive.registerAdapter(HabitTypeAdapter()); // typeId: 2
   Hive.registerAdapter(ValidationMethodAdapter()); // typeId: 3
 
-  print('✅ Hive initialized and type adapters registered');
+  debugPrint('✅ Hive initialized and type adapters registered');
 
   // Initialize local data source (opens Hive boxes)
   final localDataSource = LocalDataSource();
   await localDataSource.init();
 
-  print('✅ Local data source initialized');
+  debugPrint('✅ Local data source initialized');
 
   // Initialize Supabase with credentials from .env
   await Supabase.initialize(
@@ -38,7 +38,7 @@ void main() async {
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
 
-  print('✅ Supabase initialized: ${SupabaseConfig.supabaseUrl}');
+  debugPrint('✅ Supabase initialized: ${SupabaseConfig.supabaseUrl}');
 
   runApp(const XenoApp());
 }
@@ -48,9 +48,9 @@ class XenoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const UnityControlScreen(),
+      home: UnityControlScreen(),
     );
   }
 }
@@ -66,9 +66,9 @@ class _UnityControlScreenState extends State<UnityControlScreen> {
   UnityWidgetController? _unityWidgetController;
 
   // Этот метод вызывается, когда Unity готова к работе
-  void _onUnityCreated(controller) {
+  void _onUnityCreated(UnityWidgetController controller) {
     _unityWidgetController = controller;
-    print("Unity Controller Attached");
+    debugPrint("Unity Controller Attached");
   }
 
   // Главная функция "выстрела" в Unity
@@ -78,9 +78,9 @@ class _UnityControlScreenState extends State<UnityControlScreen> {
       // 2. Имя метода в C# скрипте (SetColor)
       // 3. Аргумент (red / blue)
       _unityWidgetController?.postMessage('Cube', 'SetColor', color);
-      print("Command sent: $color");
+      debugPrint("Command sent: $color");
     } else {
-      print("Error: Controller is null");
+      debugPrint("Error: Controller is null");
     }
   }
 

@@ -126,7 +126,21 @@ flutter run
 
 ### Testing
 ```powershell
+# Run all tests
 flutter test
+
+# Run tests with coverage report
+flutter test --coverage
+
+# View coverage summary (requires lcov: choco install lcov)
+lcov --summary coverage/lcov.info
+
+# Generate HTML coverage report (requires lcov)
+genhtml coverage/lcov.info -o coverage/html
+# Then open coverage/html/index.html in browser
+
+# Check coverage meets 80% threshold
+bash scripts/check_coverage.sh
 ```
 
 ### Build APK

@@ -1,4 +1,4 @@
-import '../../data/models/creature_state.dart';
+import 'package:client_app/data/models/creature_state.dart';
 
 /// Repository interface for creature state management.
 ///

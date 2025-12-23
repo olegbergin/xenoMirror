@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../models/creature_state.dart';
-import '../models/habit_entry.dart';
+import 'package:client_app/data/models/creature_state.dart';
+import 'package:client_app/data/models/habit_entry.dart';
 
 /// Local data source that manages Hive boxes for offline-first data persistence.
 ///

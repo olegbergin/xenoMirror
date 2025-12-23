@@ -1,7 +1,7 @@
-import '../../core/constants/xp_constants.dart';
-import '../../domain/repositories/i_creature_repository.dart';
-import '../datasources/local_data_source.dart';
-import '../models/creature_state.dart';
+import 'package:client_app/core/constants/xp_constants.dart';
+import 'package:client_app/domain/repositories/i_creature_repository.dart';
+import 'package:client_app/data/datasources/local_data_source.dart';
+import 'package:client_app/data/models/creature_state.dart';
 
 /// Concrete implementation of ICreatureRepository using local Hive storage.
 ///

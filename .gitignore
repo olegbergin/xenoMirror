@@ -22,6 +22,10 @@ desktop.ini
 .pub/
 build/
 
+# Test coverage (Phase 1 - Agent-Ready Infrastructure)
+coverage/
+*.lcov
+
 # IDE / Editors
 .idea/
 .vscode/

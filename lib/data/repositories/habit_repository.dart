@@ -1,6 +1,6 @@
-import '../../domain/repositories/i_habit_repository.dart';
-import '../datasources/local_data_source.dart';
-import '../models/habit_entry.dart';
+import 'package:client_app/domain/repositories/i_habit_repository.dart';
+import 'package:client_app/data/datasources/local_data_source.dart';
+import 'package:client_app/data/models/habit_entry.dart';
 
 /// Concrete implementation of IHabitRepository using local Hive storage.
 ///
