@@ -35,17 +35,25 @@ XenoMirror is a hybrid Flutter + Unity application where:
 - **Unity**: 2022.3 LTS (URP)
 - **Bridge**: `flutter-unity-view-widget` (master branch from GitHub)
 - **Target Platform**: Android ARM64/ARMv7 (physical devices only, no emulators)
-- **Data Storage (MVP)**: Local storage (SharedPreferences + SQLite/Hive)
+- **Backend**: Supabase (PostgreSQL + PostgREST + GoTrue + Storage)
+  - **Development**: Local instance via Docker (http://127.0.0.1:54321)
+  - **Production**: Cloud instance (future migration)
+- **Environment Config**: `flutter_dotenv` for .env file management
 - **Vision AI (MVP)**: Google ML Kit (On-device)
-- **Future Backend**: Supabase (PostgreSQL + Edge Functions)
 - **Future AI Chat**: OpenAI GPT-4o-mini
 
 ---
 
 ## 2. Flutter Layer Architecture
 
-### Current Implementation (v0.1.0)
+### Current Implementation (v0.2.0)
 ```
+main() async
+├── WidgetsFlutterBinding.ensureInitialized()
+├── dotenv.load() - Load .env file
+├── Supabase.initialize() - Connect to backend
+└── runApp(XenoApp)
+
 XenoApp (MaterialApp)
 └── UnityControlScreen (StatefulWidget)
     ├── UnityWidget (Bridge to Unity)
@@ -53,7 +61,10 @@ XenoApp (MaterialApp)
 ```
 
 **Key files**:
-- `lib/main.dart` - Main entry point, contains UnityControlScreen demo
+- `lib/main.dart` - Main entry point, Supabase initialization, UnityControlScreen demo
+- `lib/config/supabase_config.dart` - Configuration reading from .env
+- `lib/core/supabase_client.dart` - Global Supabase client accessor
+- `.env` - Environment variables (NOT in git, use .env.example as template)
 
 **State management** (current): StatefulWidget with local state
 **State management** (planned): BLoC pattern for XP system, creature state
@@ -104,7 +115,94 @@ CreatureRoot (Empty GameObject)
 
 ---
 
-## 4. Flutter ↔ Unity Bridge
+## 4. Supabase Backend Architecture
+
+### Local Development Setup
+**Location**: `D:\xenoMirror\supabase/` (separate from Flutter client)
+
+**Services Running Locally**:
+- **PostgreSQL**: Database (port 54322)
+- **PostgREST**: Auto-generated REST API (http://127.0.0.1:54321/rest/v1)
+- **GoTrue**: Authentication service (not used in MVP)
+- **Storage**: File storage (S3-compatible)
+- **Studio**: Web UI for database management (http://127.0.0.1:54323)
+- **Realtime**: WebSocket subscriptions (future use)
+
+### Environment Configuration
+**Development** (`.env` file):
+```env
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_ANON_KEY=sb_publishable_[local_key]
+```
+
+**Production** (future):
+```env
+SUPABASE_URL=https://[project-id].supabase.co
+SUPABASE_ANON_KEY=eyJ[production_key]
+```
+
+### Database Schema (Planned)
+**Tables**:
+1. `creature_state` - User's creature data
+   - `id` (uuid, primary key)
+   - `user_id` (uuid, foreign key - future auth)
+   - `xp_vitality` (int4)
+   - `xp_mind` (int4)
+   - `xp_soul` (int4)
+   - `legs_tier` (int2)
+   - `head_tier` (int2)
+   - `arms_tier` (int2)
+   - `created_at` (timestamptz)
+   - `updated_at` (timestamptz)
+
+2. `habit_logs` - Activity history
+   - `id` (uuid, primary key)
+   - `user_id` (uuid, foreign key - future auth)
+   - `habit_type` (text: 'vitality' | 'mind' | 'soul')
+   - `activity` (text: 'squats', 'reading', etc.)
+   - `xp_earned` (int4)
+   - `validation_method` (text: 'manual' | 'camera')
+   - `created_at` (timestamptz)
+
+### Flutter Integration
+**Client initialization** (`lib/main.dart`):
+```dart
+await Supabase.initialize(
+  url: SupabaseConfig.supabaseUrl,
+  anonKey: SupabaseConfig.supabaseAnonKey,
+);
+```
+
+**Usage example**:
+```dart
+import 'package:client_app/core/supabase_client.dart';
+
+// Query creature state
+final state = await supabase
+  .from('creature_state')
+  .select()
+  .single();
+
+// Insert habit log
+await supabase.from('habit_logs').insert({
+  'habit_type': 'vitality',
+  'activity': 'squats',
+  'xp_earned': 10,
+  'validation_method': 'manual',
+});
+```
+
+### Migration Strategy
+**Current**: Local Supabase for development (no auth required)
+**Future**: Migrate to cloud Supabase when MVP validated
+- Export local data as SQL dump
+- Import to cloud instance
+- Update .env with cloud credentials
+- Enable Row Level Security (RLS) for multi-user support
+
+---
+
+## 5. Flutter ↔ Unity Bridge
 
 ### Communication Protocol
 **Direction**: Flutter → Unity (one-way currently, callbacks planned for future)

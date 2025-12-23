@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'config/supabase_config.dart';
+import 'data/models/creature_state.dart';
+import 'data/models/habit_entry.dart';
+import 'data/datasources/local_data_source.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized
@@ -10,6 +14,23 @@ void main() async {
 
   // Load environment variables from .env file
   await dotenv.load(fileName: '.env');
+
+  // Initialize Hive (local database)
+  await Hive.initFlutter();
+
+  // Register Hive type adapters
+  Hive.registerAdapter(CreatureStateAdapter()); // typeId: 0
+  Hive.registerAdapter(HabitEntryAdapter()); // typeId: 1
+  Hive.registerAdapter(HabitTypeAdapter()); // typeId: 2
+  Hive.registerAdapter(ValidationMethodAdapter()); // typeId: 3
+
+  print('✅ Hive initialized and type adapters registered');
+
+  // Initialize local data source (opens Hive boxes)
+  final localDataSource = LocalDataSource();
+  await localDataSource.init();
+
+  print('✅ Local data source initialized');
 
   // Initialize Supabase with credentials from .env
   await Supabase.initialize(

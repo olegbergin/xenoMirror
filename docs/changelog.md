@@ -5,6 +5,46 @@ Format: Session-based entries (not individual commits).
 
 ---
 
+## Session: 2024-12-22 - Local Supabase Backend Integration
+**Duration**: ~2 hours
+**Focus**: Set up local Supabase backend with environment-based configuration
+
+### Added
+- Local Supabase instance running in Docker (PostgreSQL + PostgREST + GoTrue + Storage + Studio)
+- `supabase_flutter` package for database client integration
+- `flutter_dotenv` package for secure environment variable management
+- `lib/config/supabase_config.dart` - Configuration class reading from .env
+- `lib/core/supabase_client.dart` - Global Supabase client helper
+- `.env.example` - Template for developers to set up local credentials
+- `/update-docs` slash command for automated documentation updates
+
+### Changed
+- `.gitignore` - Added environment file exclusions (.env, .env.local, .env.*.local)
+- `lib/main.dart` - Added Supabase initialization before app start
+- `pubspec.yaml` - Added supabase_flutter and flutter_dotenv dependencies
+- `test/widget_test.dart` - Fixed test to work with new app structure (XenoApp)
+
+### Architecture Changes
+- **Backend separation**: Supabase initialized in project root (`D:\xenoMirror\supabase/`) separate from Flutter client
+- **Environment-based config**: Credentials loaded from .env file (not hardcoded)
+- **Local-first approach**: Development uses local Supabase (http://127.0.0.1:54321), production will use cloud instance
+- **Security**: .env files excluded from git to prevent credential leaks
+
+### Technical Notes
+- Supabase CLI v2.67.1 installed via Scoop
+- Local Supabase services accessible at:
+  - Studio UI: http://127.0.0.1:54323
+  - REST API: http://127.0.0.1:54321/rest/v1
+  - GraphQL: http://127.0.0.1:54321/graphql/v1
+- Database schema design is next step (creature_state, habit_logs tables)
+
+### Next Session Prep
+- Design PostgreSQL schema for creature state and habit entries
+- Create initial Supabase migrations
+- Implement data repository layer in Flutter
+
+---
+
 ## Session: 2025-12-22 - MVP Architecture Planning & Documentation System
 **Duration**: ~3 hours
 **Focus**: Defining MVP scope and creating automated documentation infrastructure

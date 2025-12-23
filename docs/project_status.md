@@ -7,23 +7,23 @@
 ---
 
 ## 🎯 Current Focus (This Session)
-- [x] Design automated documentation system structure
-- [x] Create comprehensive architecture documentation
-- [x] Seed changelog with git history
-- [ ] Complete feature documentation templates
-- [ ] Update CLAUDE.md with doc system instructions
-- [ ] Decide: Hive vs SQLite for local storage
+- [ ] Design PostgreSQL schema for creature_state table (xp, tiers, timestamps)
+- [ ] Design PostgreSQL schema for habit_logs table (activity, xp_earned, validation_method)
+- [ ] Create initial Supabase migrations (SQL files)
+- [ ] Test migrations with `supabase db reset`
+- [ ] Document schema decisions in architecture.md
 
-## ✅ Recently Completed (Last 2 Sessions)
+## ✅ Recently Completed (Last 3 Sessions)
+- ✅ **Local Supabase integration** (Docker, environment-based config, .env setup)
+- ✅ **Created `/update-docs` command** (automated documentation workflow)
+- ✅ **Documentation system** (architecture, changelog, project_status, feature templates)
 - ✅ Flutter-Unity bridge proof-of-concept (color-changing cube demo)
 - ✅ Build pipeline validated on physical Android device
-- ✅ Root documentation created (README, CLAUDE, project_spec)
-- ✅ MVP scope defined (local-first, no AI chat, includes vision AI)
-- ✅ Development priorities roadmap (8-step plan)
+- ✅ MVP scope defined (local-first, Google ML Kit vision, no AI chat)
 
 ## 🚧 In Progress
-- **Documentation Infrastructure**: Core docs created, need CLAUDE.md integration
-- **Data Layer Research**: Evaluating Hive (simple key-value) vs SQLite (complex queries)
+- **Database Schema Design**: Defining PostgreSQL tables for creature state and habit logs
+- **Supabase Backend**: Local instance running, schema design next
 
 ## 🔜 Next Up (Priority Order)
 1. **Complete Documentation System** (1 hour)
@@ -109,8 +109,8 @@
 | Feature | Status | Priority | Est. Time | Notes |
 |---------|--------|----------|-----------|-------|
 | **Flutter-Unity Bridge** | ✅ Done | P0 | - | Color demo working on device |
-| **Documentation System** | 🚧 In Progress | P1 | 1h remaining | Core docs created, CLAUDE.md update pending |
-| **Local Data Persistence** | 📋 Not Started | P0 | 2-3h | Hive vs SQLite decision pending |
+| **Documentation System** | ✅ Done | P1 | - | Docs + /update-docs command complete |
+| **Local Supabase Backend** | 🚧 In Progress | P0 | 1-2h remaining | Running locally, schema design next |
 | **Manual Habit Logging** | 📋 Not Started | P0 | 3-4h | After data layer exists |
 | **XP Calculation Logic** | 📋 Not Started | P0 | 2-3h | BLoC pattern planned |
 | **Unity Creature (Basic)** | 📋 Not Started | P0 | 4-6h | Rayman-style modular architecture |
@@ -128,11 +128,12 @@
 
 | Date | Duration | Focus | Outcome |
 |------|----------|-------|---------|
+| 2024-12-22 | 2h | Local Supabase integration + /update-docs command | ✅ Backend running, environment config complete |
 | 2025-12-22 | 3h | Documentation system design + MVP planning | ✅ Docs infrastructure 80% complete |
 | 2025-12-21 | 3h | Flutter-Unity bridge validation | ✅ POC working on physical device |
 | 2025-12-20 | 1h | Initial project setup | ✅ Project scaffold created |
 
-**Total time invested**: 7 hours
+**Total time invested**: 9 hours
 **Estimated time to MVP**: ~25-35 hours remaining
 
 ---
