@@ -9,7 +9,7 @@ class HabitRepository implements IHabitRepository {
   final LocalDataSource _localDataSource;
 
   HabitRepository({required LocalDataSource localDataSource})
-      : _localDataSource = localDataSource;
+    : _localDataSource = localDataSource;
 
   @override
   Future<void> addEntry(HabitEntry entry) async {
@@ -22,14 +22,8 @@ class HabitRepository implements IHabitRepository {
   }
 
   @override
-  Future<List<HabitEntry>> getHistory({
-    int limit = 50,
-    int offset = 0,
-  }) async {
-    return _localDataSource.getHabitHistory(
-      limit: limit,
-      offset: offset,
-    );
+  Future<List<HabitEntry>> getHistory({int limit = 50, int offset = 0}) async {
+    return _localDataSource.getHabitHistory(limit: limit, offset: offset);
   }
 
   @override
@@ -113,9 +107,15 @@ class HabitRepository implements IHabitRepository {
     final avgXPPerDay = entries.isEmpty ? 0 : totalXP ~/ 7;
 
     // Count by habit type
-    final vitalityCount = entries.where((e) => e.habitType == HabitType.vitality).length;
-    final mindCount = entries.where((e) => e.habitType == HabitType.mind).length;
-    final soulCount = entries.where((e) => e.habitType == HabitType.soul).length;
+    final vitalityCount = entries
+        .where((e) => e.habitType == HabitType.vitality)
+        .length;
+    final mindCount = entries
+        .where((e) => e.habitType == HabitType.mind)
+        .length;
+    final soulCount = entries
+        .where((e) => e.habitType == HabitType.soul)
+        .length;
 
     return {
       'totalEntries': entries.length,
@@ -152,7 +152,9 @@ class HabitRepository implements IHabitRepository {
   Future<bool> hasLoggedAllTypesToday() async {
     final todayEntries = await getTodayEntries();
 
-    final hasVitality = todayEntries.any((e) => e.habitType == HabitType.vitality);
+    final hasVitality = todayEntries.any(
+      (e) => e.habitType == HabitType.vitality,
+    );
     final hasMind = todayEntries.any((e) => e.habitType == HabitType.mind);
     final hasSoul = todayEntries.any((e) => e.habitType == HabitType.soul);
 
@@ -166,7 +168,8 @@ class HabitRepository implements IHabitRepository {
 
     final activityCounts = <String, int>{};
     for (final entry in entries) {
-      activityCounts[entry.activity] = (activityCounts[entry.activity] ?? 0) + 1;
+      activityCounts[entry.activity] =
+          (activityCounts[entry.activity] ?? 0) + 1;
     }
 
     final sorted = activityCounts.entries.toList()

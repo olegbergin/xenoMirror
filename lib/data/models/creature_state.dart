@@ -66,10 +66,7 @@ class CreatureState extends HiveObject {
   /// Factory constructor to create a fresh creature
   factory CreatureState.initial() {
     final now = DateTime.now();
-    return CreatureState(
-      createdAt: now,
-      lastUpdated: now,
-    );
+    return CreatureState(createdAt: now, lastUpdated: now);
   }
 
   // Helper getters for XP progress (0.0 - 1.0)

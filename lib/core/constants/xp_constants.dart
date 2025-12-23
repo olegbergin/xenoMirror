@@ -24,14 +24,12 @@ class XpConstants {
     'walking': 15, // Per 15 minutes
     'sleep': 15, // Per 8 hours quality sleep
     'workout': 25, // Per gym session
-
     // MIND → Head & Sensors
     'reading': 15, // Per 15 minutes
     'study': 12, // Per 15 minutes
     'planning': 10, // Per planning session
     'learning': 18, // Per course/tutorial session
     'writing': 14, // Per 15 minutes
-
     // SOUL → Arms & Aura
     'meditation': 10, // Per 10 minutes
     'art': 15, // Per art session
@@ -43,7 +41,8 @@ class XpConstants {
   // Bonus multipliers
   static const double cameraValidationBonus = 1.5; // +50% XP if validated by AI
   static const double streakBonus = 1.2; // Future: +20% for 3-day streak
-  static const double perfectDayBonus = 2.0; // Future: +100% for all 3 habit types in one day
+  static const double perfectDayBonus =
+      2.0; // Future: +100% for all 3 habit types in one day
 
   /// Get the tier level for a given XP amount
   static int getTierForXP(int xp) {

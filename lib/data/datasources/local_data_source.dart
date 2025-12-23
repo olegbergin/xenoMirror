@@ -96,10 +96,7 @@ class LocalDataSource {
   /// Get habit history with pagination
   ///
   /// Returns the most recent [limit] entries, skipping [offset] entries.
-  List<HabitEntry> getHabitHistory({
-    int limit = 50,
-    int offset = 0,
-  }) {
+  List<HabitEntry> getHabitHistory({int limit = 50, int offset = 0}) {
     final allEntries = getAllHabitEntries();
     final endIndex = (offset + limit).clamp(0, allEntries.length);
 
@@ -123,9 +120,11 @@ class LocalDataSource {
     required DateTime endDate,
   }) {
     final entries = _habitLogsBox!.values
-        .where((entry) =>
-            entry.timestamp.isAfter(startDate) &&
-            entry.timestamp.isBefore(endDate))
+        .where(
+          (entry) =>
+              entry.timestamp.isAfter(startDate) &&
+              entry.timestamp.isBefore(endDate),
+        )
         .toList();
     entries.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return entries;
@@ -137,19 +136,13 @@ class LocalDataSource {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
-    return getHabitEntriesByDateRange(
-      startDate: startOfDay,
-      endDate: endOfDay,
-    );
+    return getHabitEntriesByDateRange(startDate: startOfDay, endDate: endOfDay);
   }
 
   /// Get total XP earned today (for daily summary)
   int getTodayTotalXP() {
     final todayEntries = getTodayEntries();
-    return todayEntries.fold<int>(
-      0,
-      (sum, entry) => sum + entry.xpEarned,
-    );
+    return todayEntries.fold<int>(0, (sum, entry) => sum + entry.xpEarned);
   }
 
   /// Get habit entry by ID

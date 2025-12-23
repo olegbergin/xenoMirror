@@ -10,7 +10,7 @@ class CreatureRepository implements ICreatureRepository {
   final LocalDataSource _localDataSource;
 
   CreatureRepository({required LocalDataSource localDataSource})
-      : _localDataSource = localDataSource;
+    : _localDataSource = localDataSource;
 
   @override
   Future<CreatureState> getCreatureState() async {
@@ -27,12 +27,18 @@ class CreatureRepository implements ICreatureRepository {
     final current = await getCreatureState();
 
     // Calculate new XP values (clamped to valid range)
-    final newVitalityXP = (current.xpVitality + (vitalityDelta ?? 0))
-        .clamp(0, XpConstants.maxXP);
-    final newMindXP =
-        (current.xpMind + (mindDelta ?? 0)).clamp(0, XpConstants.maxXP);
-    final newSoulXP =
-        (current.xpSoul + (soulDelta ?? 0)).clamp(0, XpConstants.maxXP);
+    final newVitalityXP = (current.xpVitality + (vitalityDelta ?? 0)).clamp(
+      0,
+      XpConstants.maxXP,
+    );
+    final newMindXP = (current.xpMind + (mindDelta ?? 0)).clamp(
+      0,
+      XpConstants.maxXP,
+    );
+    final newSoulXP = (current.xpSoul + (soulDelta ?? 0)).clamp(
+      0,
+      XpConstants.maxXP,
+    );
 
     // Calculate new tiers based on XP
     final newLegsTier = XpConstants.getTierForXP(newVitalityXP);

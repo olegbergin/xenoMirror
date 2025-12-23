@@ -16,15 +16,12 @@ void main() {
 
     test('copyWith creates new instance with updated values', () {
       final original = CreatureState.initial();
-      final updated = original.copyWith(
-        xpVitality: 100,
-        legsTier: 1,
-      );
+      final updated = original.copyWith(xpVitality: 100, legsTier: 1);
 
       expect(updated.xpVitality, 100);
       expect(updated.legsTier, 1);
-      expect(updated.xpMind, 0);  // Unchanged
-      expect(updated.xpSoul, 0);  // Unchanged
+      expect(updated.xpMind, 0); // Unchanged
+      expect(updated.xpSoul, 0); // Unchanged
     });
 
     test('copyWith preserves unchanged values', () {
@@ -39,10 +36,10 @@ void main() {
 
       final updated = original.copyWith(xpVitality: 100);
 
-      expect(updated.xpVitality, 100);  // Changed
-      expect(updated.xpMind, 30);       // Unchanged
-      expect(updated.xpSoul, 20);       // Unchanged
-      expect(updated.legsTier, 0);      // Unchanged
+      expect(updated.xpVitality, 100); // Changed
+      expect(updated.xpMind, 30); // Unchanged
+      expect(updated.xpSoul, 20); // Unchanged
+      expect(updated.legsTier, 0); // Unchanged
     });
 
     test('equality works correctly', () {
@@ -65,9 +62,9 @@ void main() {
 
     test('progress getters return correct values', () {
       final state = CreatureState.initial().copyWith(
-        xpVitality: 50,  // 50% of tier 0 (0-100)
-        xpMind: 100,     // 0% of tier 1 (100-400)
-        xpSoul: 700,     // 50% of tier 2 (400-1000)
+        xpVitality: 50, // 50% of tier 0 (0-100)
+        xpMind: 100, // 0% of tier 1 (100-400)
+        xpSoul: 700, // 50% of tier 2 (400-1000)
         legsTier: 0,
         headTier: 1,
         armsTier: 2,
@@ -80,9 +77,9 @@ void main() {
 
     test('progress getters handle tier boundaries', () {
       final state = CreatureState.initial().copyWith(
-        xpVitality: 100,  // Exactly at tier 1 threshold (100% of tier 0)
-        xpMind: 400,      // Exactly at tier 2 threshold (100% of tier 1)
-        xpSoul: 1000,     // Exactly at tier 3 threshold (100% of tier 2)
+        xpVitality: 100, // Exactly at tier 1 threshold (100% of tier 0)
+        xpMind: 400, // Exactly at tier 2 threshold (100% of tier 1)
+        xpSoul: 1000, // Exactly at tier 3 threshold (100% of tier 2)
         legsTier: 0,
         headTier: 1,
         armsTier: 2,
@@ -95,11 +92,11 @@ void main() {
 
     test('progress getters clamp to 1.0 if exceeding threshold', () {
       final state = CreatureState.initial().copyWith(
-        xpVitality: 500,  // Way over tier 0 threshold
+        xpVitality: 500, // Way over tier 0 threshold
         legsTier: 0,
       );
 
-      expect(state.vitalityProgress, 1.0);  // Clamped
+      expect(state.vitalityProgress, 1.0); // Clamped
     });
 
     test('lastUpdated is preserved in copyWith', () {

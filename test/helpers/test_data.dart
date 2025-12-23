@@ -153,7 +153,7 @@ class TestData {
       id: 'test-workout-${DateTime.now().millisecondsSinceEpoch}',
       habitType: HabitType.vitality,
       activity: 'workout',
-      xpEarned: 38,  // 25 base * 1.5 (camera bonus)
+      xpEarned: 38, // 25 base * 1.5 (camera bonus)
       validationMethod: ValidationMethod.camera,
     );
   }

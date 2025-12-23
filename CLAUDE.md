@@ -85,7 +85,7 @@ D:\xenoMirror\client_app\          # Flutter project root
 │   └── settings.gradle.kts         # Module config (includes :unityLibrary)
 ├── README.md                       # Project overview & setup guide
 ├── CLAUDE.md                       # AI assistant instructions (this file)
-├── project_spec.md.md              # Product requirements document
+├── project_spec.md                 # Product requirements document
 └── pubspec.yaml                    # Flutter dependencies
 ```
 
@@ -297,11 +297,11 @@ For feature docs:
 **Separation of concerns**:
 - `README.md`: High-level project intro, setup instructions, "how to build" (stable, rarely changes)
 - `CLAUDE.md`: Instructions for AI assistant (build commands, coding patterns, constraints)
-- `project_spec.md.md`: Product requirements, user stories, MVP scope
+- `project_spec.md`: Product requirements, user stories, MVP scope
 - `docs/`: Detailed technical documentation that evolves with code
 
 **When to update which**:
 - Add new build step → Update `README.md` + `CLAUDE.md`
-- Change MVP scope → Update `project_spec.md.md`
+- Change MVP scope → Update `project_spec.md`
 - Implement new feature → Update `docs/features/`, possibly `docs/architecture.md`
 - Complete work session → Update `docs/changelog.md` + `docs/project_status.md`

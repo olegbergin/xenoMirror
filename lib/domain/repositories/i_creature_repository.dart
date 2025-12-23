@@ -20,11 +20,7 @@ abstract class ICreatureRepository {
   /// ```dart
   /// await repository.updateXP(vitalityDelta: 10); // Add 10 XP to Vitality
   /// ```
-  Future<void> updateXP({
-    int? vitalityDelta,
-    int? mindDelta,
-    int? soulDelta,
-  });
+  Future<void> updateXP({int? vitalityDelta, int? mindDelta, int? soulDelta});
 
   /// Save/update the complete creature state
   ///

@@ -19,10 +19,7 @@ abstract class IHabitRepository {
   ///
   /// Returns [limit] most recent entries, skipping [offset] entries.
   /// Useful for infinite scrolling or "load more" functionality.
-  Future<List<HabitEntry>> getHistory({
-    int limit = 50,
-    int offset = 0,
-  });
+  Future<List<HabitEntry>> getHistory({int limit = 50, int offset = 0});
 
   /// Get entries filtered by habit type
   ///

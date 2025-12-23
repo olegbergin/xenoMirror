@@ -98,14 +98,14 @@ void main() {
       test('applies camera validation bonus', () {
         expect(
           XpConstants.calculateFinalXP(10, cameraValidated: true),
-          15,  // 10 * 1.5
+          15, // 10 * 1.5
         );
       });
 
       test('applies streak bonus', () {
         expect(
           XpConstants.calculateFinalXP(10, hasStreak: true),
-          12,  // 10 * 1.2
+          12, // 10 * 1.2
         );
       });
 
@@ -116,14 +116,14 @@ void main() {
             cameraValidated: true,
             hasStreak: true,
           ),
-          18,  // 10 * 1.5 * 1.2 = 18
+          18, // 10 * 1.5 * 1.2 = 18
         );
       });
 
       test('rounds fractional XP correctly', () {
         expect(
           XpConstants.calculateFinalXP(7, cameraValidated: true),
-          11,  // 7 * 1.5 = 10.5, rounds to 11
+          11, // 7 * 1.5 = 10.5, rounds to 11
         );
       });
     });
