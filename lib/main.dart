@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_unity_widget/flutter_unity_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,6 +7,12 @@ import 'package:client_app/config/supabase_config.dart';
 import 'package:client_app/data/models/creature_state.dart';
 import 'package:client_app/data/models/habit_entry.dart';
 import 'package:client_app/data/datasources/local_data_source.dart';
+import 'package:client_app/data/repositories/creature_repository.dart';
+import 'package:client_app/data/repositories/habit_repository.dart';
+import 'package:client_app/presentation/blocs/creature/creature_bloc.dart';
+import 'package:client_app/presentation/blocs/habit/habit_bloc.dart';
+import 'package:client_app/presentation/pages/home_page.dart';
+import 'package:client_app/core/theme/app_theme.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized
@@ -40,88 +46,46 @@ void main() async {
 
   debugPrint('✅ Supabase initialized: ${SupabaseConfig.supabaseUrl}');
 
-  runApp(const XenoApp());
+  // Configure system UI overlay for dark theme
+  AppTheme.setSystemUIOverlay();
+
+  runApp(XenoApp(localDataSource: localDataSource));
 }
 
 class XenoApp extends StatelessWidget {
-  const XenoApp({super.key});
+  const XenoApp({
+    super.key,
+    required this.localDataSource,
+  });
+
+  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: UnityControlScreen(),
-    );
-  }
-}
+    // Initialize repositories
+    final creatureRepository = CreatureRepository(localDataSource: localDataSource);
+    final habitRepository = HabitRepository(localDataSource: localDataSource);
 
-class UnityControlScreen extends StatefulWidget {
-  const UnityControlScreen({super.key});
-
-  @override
-  State<UnityControlScreen> createState() => _UnityControlScreenState();
-}
-
-class _UnityControlScreenState extends State<UnityControlScreen> {
-  UnityWidgetController? _unityWidgetController;
-
-  // Этот метод вызывается, когда Unity готова к работе
-  void _onUnityCreated(UnityWidgetController controller) {
-    _unityWidgetController = controller;
-    debugPrint("Unity Controller Attached");
-  }
-
-  // Главная функция "выстрела" в Unity
-  void _sendCommand(String color) {
-    if (_unityWidgetController != null) {
-      // 1. Имя объекта в иерархии Unity (Cube)
-      // 2. Имя метода в C# скрипте (SetColor)
-      // 3. Аргумент (red / blue)
-      _unityWidgetController?.postMessage('Cube', 'SetColor', color);
-      debugPrint("Command sent: $color");
-    } else {
-      debugPrint("Error: Controller is null");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('XenoMirror: Link Test')),
-      body: Stack(
-        children: [
-          // Слой 1: Окно в Unity
-          UnityWidget(
-            onUnityCreated: _onUnityCreated,
-            useAndroidViewSurface:
-                true, // Критично для корректного рендера на Android
-            borderRadius: BorderRadius.zero,
+    return MultiBlocProvider(
+      providers: [
+        // Creature BLoC - manages creature evolution and XP
+        BlocProvider<CreatureBloc>(
+          create: (context) => CreatureBloc(
+            creatureRepository: creatureRepository,
           ),
-
-          // Слой 2: Flutter UI поверх Unity
-          Positioned(
-            bottom: 50,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FloatingActionButton.extended(
-                  onPressed: () => _sendCommand('red'),
-                  backgroundColor: Colors.red,
-                  label: const Text("Make RED"),
-                  icon: const Icon(Icons.colorize),
-                ),
-                FloatingActionButton.extended(
-                  onPressed: () => _sendCommand('blue'),
-                  backgroundColor: Colors.blue,
-                  label: const Text("Make BLUE"),
-                  icon: const Icon(Icons.colorize),
-                ),
-              ],
-            ),
+        ),
+        // Habit BLoC - manages habit logging and history
+        BlocProvider<HabitBloc>(
+          create: (context) => HabitBloc(
+            habitRepository: habitRepository,
           ),
-        ],
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'XenoMirror OS',
+        theme: AppTheme.darkTheme,
+        home: const HomePage(),
       ),
     );
   }

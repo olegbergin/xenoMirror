@@ -1,10 +1,15 @@
 {
-  "last_updated": "2025-12-23T17:34:35Z",
-  "last_commit": "62e0835",
+  "last_updated": "2025-12-24T16:56:28Z",
+  "last_commit": "56846ed",
   "architecture": "2025-12-23T17:34:35Z",
-  "changelog": "2025-12-23T17:34:35Z",
-  "project_status": "2025-12-23T17:34:35Z",
+  "changelog": "2025-12-24T16:56:28Z",
+  "project_status": "2025-12-24T16:56:28Z",
   "design_spec_version": "1.0.0",
-  "design_last_validated": null,
-  "design_compliance_score": null
+  "design_last_validated": "2025-12-24T16:56:28Z",
+  "design_compliance_score": 90,
+  "validation_last_checked": "2025-12-24T16:56:28Z",
+  "agent_ready_score": 25,
+  "linting_status": "fail",
+  "linting_error_count": 14,
+  "linting_warning_count": 57
 }

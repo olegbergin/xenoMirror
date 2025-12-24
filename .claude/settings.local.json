@@ -5,7 +5,10 @@
       "Bash(git commit:*)",
       "Bash(tree:*)",
       "WebSearch",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(dir:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)"
     ]
   }
 }

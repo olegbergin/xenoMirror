@@ -1,196 +1,135 @@
 # XenoMirror Project Status
 
-**Last Updated**: 2025-12-22 23:45 UTC
-**Current Phase**: MVP Development
-**Sprint Goal**: Build automated documentation system and plan data architecture
+**Last Updated**: 2025-12-24 16:56 UTC
+**Current Phase**: Phase 2 - UI/UX Implementation
+**Sprint Goal**: Complete XenoMirror OS interface and fix linting errors
 
 ---
 
 ## 🎯 Current Focus (This Session)
-- [ ] Design UX/UI for main app screens (home, habit logging, creature detail)
-- [ ] Create Flutter widget structure and navigation flow
-- [ ] Design visual theme (colors, typography, spacing)
-- [ ] Implement home screen with Unity viewer + overlay UI
-- [ ] Create habit logging screen with manual input forms
+- [ ] Fix linting errors (14 compile errors)
+  - Fix repository constructor parameters (`localDataSource` vs `dataSource`)
+  - Fix BlocBuilder/BlocListener type arguments (need 2 type params)
+  - Remove unused imports
+  - Fix CardTheme/DialogTheme type mismatches
+- [ ] Complete Unity scene setup
+  - Attach CreatureController.cs to GameObject
+  - Assign body part renderers and tier materials
+  - Export Android build
+- [ ] Test on physical device
+  - Verify colors match design spec
+  - Test haptic feedback
+  - Verify XP persistence
+  - Check Unity message reception
 
-## ✅ Recently Completed (Last 3 Sessions)
-- ✅ **Phase 1 Data Layer** (Hive models, repositories, XP constants, local storage complete)
-- ✅ **Architecture Design** (Clean Architecture + BLoC pattern planned)
-- ✅ **XP Progression System** (Polynomial curve: 100/400/1000 thresholds)
-- ✅ **Repository Pattern** (Interfaces + implementations for future Supabase migration)
-- ✅ **Local Supabase integration** (Docker, environment-based config, .env setup)
-- ✅ **Created `/update-docs` command** (automated documentation workflow)
-- ✅ **Documentation system** (architecture, changelog, project_status, feature templates)
-- ✅ Flutter-Unity bridge proof-of-concept (color-changing cube demo)
-- ✅ Build pipeline validated on physical Android device
-- ✅ MVP scope defined (local-first, Google ML Kit vision, no AI chat)
+## 🔍 Validation Health
+
+Last checked: 2025-12-24T16:56:28Z
+
+| Metric | Status | Details |
+|--------|--------|---------|
+| **Linting** | ❌ Fail | `flutter analyze` - 14 errors, 57 warnings |
+| **Test Coverage** | Unknown | No coverage data yet |
+| **Build** | Not tested | Will test after fixing linting errors |
+| **Agent-Ready Score** | 25/100 | 1/4 pillars complete |
+
+**Agent-Ready Pillars**:
+- [x] agents.md documentation exists
+- [ ] Opinionated linter configured (analysis_options.yaml) - Has warnings
+- [ ] Test coverage ≥80% - No coverage data yet
+- [ ] CI/CD pipeline (Future: Phase 3)
+
+**Critical Linting Errors to Fix:**
+1. Repository constructors: `CreatureRepository(localDataSource: ...)` not `dataSource`
+2. BlocBuilder/BlocListener: Need 2 type args `BlocBuilder<CreatureBloc, CreatureBlocState>`
+3. Remove unused imports (creature_state.dart import in creature_bloc.dart)
+4. Fix CardTheme/DialogTheme type compatibility
+
+## 🎨 Design Compliance (Phase 2)
+
+Last validated: 2025-12-24T16:56:28Z
+
+| Metric | Score | Status | Issues |
+|--------|-------|--------|--------|
+| **Color Palette** | 20/20 | ✅ Pass | All colors use AppColors.* constants |
+| **Component Types** | 20/20 | ✅ Pass | Zero prohibited Material widgets |
+| **Stack Structure** | 20/20 | ✅ Pass | Correct z-order: Unity → Vignette → HUD |
+| **Haptics Coverage** | 10/20 | ⚠️ Warning | 50% coverage (3/6 interactions) |
+| **Typography** | 20/20 | ✅ Pass | Custom fonts (Orbitron, Rajdhani) defined |
+| **Design Compliance Score** | 90/100 | ✅ Pass | Target: 80+ for Phase 2 ✓ |
+
+**Design Spec Version**: v1.0.0 (`docs/reference_design_document.md`)
+
+**Improvement Opportunities**:
+- [ ] Add haptic feedback to BlocBuilder tap interactions in HomePage
+- [ ] Consider adding const constructors where possible (performance)
+
+**Reference**: See `docs/reference_design_document.md` for full UI specification.
+
+## ✅ Recently Completed (Last Session)
+
+- ✅ **Phase 2 UI/UX Implementation** - Complete XenoMirror OS cyberpunk HUD
+  - Theme System (Cipher_01 color palette, Orbitron + Rajdhani fonts)
+  - State Management (CreatureBloc, HabitBloc with 6 files total)
+  - Custom Widgets (VignetteOverlay, NeonButton, BiometricBar, InjectionPanel)
+  - Unity Integration (UnityBridgeService + CreatureController.cs)
+  - HomePage with Stack layout (Unity → Vignette → HUD)
+- ✅ **18 new files created** (presentation layer complete)
+- ✅ **Design Compliance: 90/100** (exceeds 80% target)
 
 ## 🚧 In Progress
-- **UX/UI Design**: Designing app screens and navigation flow
-- **Data Layer**: Complete and ready for use (Phase 1 done)
+- **Bug Fixes**: Fixing 14 linting errors (type mismatches, missing imports)
+- **Unity Setup**: Attaching CreatureController script and configuring materials
+- **Device Testing**: Waiting for Unity setup + bug fixes
 
 ## 🔜 Next Up (Priority Order)
-1. **Complete Documentation System** (1 hour)
-   - Finish feature templates and CLAUDE.md updates
-   - Test `/update-docs` workflow manually
 
-2. **Data Model Design** (1-2 hours)
-   - Define creature state schema (xp_vitality, xp_mind, xp_soul, tier levels)
-   - Choose persistence library (Hive or SQLite)
-   - Create Dart model classes
+1. **Fix Compile Errors** (30 min - URGENT)
+   - Update repository constructors in main.dart
+   - Add type parameters to BlocBuilder/BlocListener
+   - Remove unused imports
+   - Fix theme type mismatches
 
-3. **Habit Logging UI** (2-3 hours)
-   - Design Flutter screen with 3 habit type buttons (Vitality/Mind/Soul)
-   - Create input form (activity type, duration, notes)
-   - Wire up to temporary in-memory state (before persistence layer)
+2. **Unity Scene Configuration** (1 hour)
+   - Create CreatureController GameObject in Unity scene
+   - Assign body part renderers (legs, head, arms)
+   - Create placeholder tier materials (12 materials: Tier 0-3 for each part)
+   - Export Android debug build
 
-4. **XP Calculation Logic** (1-2 hours)
-   - Implement XP formula (activity type → XP amount)
-   - Add tier threshold logic (when to trigger evolution)
-   - Write unit tests for XP calculations
+3. **Physical Device Testing** (1 hour)
+   - Deploy to Android device
+   - Verify color accuracy (ColorZilla screenshot comparison)
+   - Test habit logging flow
+   - Check XP persistence after app restart
+   - Monitor Unity logs with adb logcat
 
-5. **Unity Creature v0.1** (3-4 hours)
-   - Model basic sphere core + 4 floating attachment points
-   - Import to Unity, set up scene hierarchy
-   - Create placeholder Tier 1/2/3 body parts
+4. **Phase 3 Planning** (Next session)
+   - Design Stats/History screens
+   - Plan camera integration (Google ML Kit)
+   - Design settings screen
 
-6. **Charge Up Shader** (2-3 hours)
-   - Create URP shader graph with emission parameter
-   - Wire shader to receive XP percentage from Flutter
-   - Test glow intensity changes
+## 🚫 Blockers & Open Questions
 
-7. **AI Vision Integration** (4-6 hours)
-   - Add Google ML Kit dependencies
-   - Implement pose detection for squat counting
-   - Implement image labeling for object recognition (books)
+**Current Blockers:**
+- Compile errors prevent running app (need to fix before testing)
 
-8. **Polish & Testing** (2-3 hours)
-   - Smooth transitions between states
-   - Particle effects on XP gain
-   - End-to-end testing on physical device
+**Open Questions:**
+- Should we add loading states to HomePage while creature data loads?
+- Do we need error handling UI for failed Unity initialization?
+- Should biometric bars show XP numbers or just visual progress?
 
----
+**Technical Debt:**
+- Need widget tests for custom components
+- Missing test coverage for BLoC files
+- No error handling for Unity bridge failures
 
-## ⚠️ Blockers & Open Questions
+## 📊 Session History
 
-### Open Questions
-- **Q1**: Should XP thresholds be linear (100, 200, 300...) or exponential (100, 250, 500...)?
-  - **Impact**: Affects game pacing and progression feel
-  - **Decision needed by**: Before implementing XP logic
-  - **Recommendation**: Start with linear for MVP, gather user feedback, iterate
-
-- **Q2**: Hive vs SQLite for local storage?
-  - **Hive pros**: Faster for simple key-value, no SQL boilerplate, smaller package size
-  - **SQLite pros**: Complex queries, relational data, SQL familiarity
-  - **Current MVP needs**: Simple CRUD on creature state + habit entries (Hive sufficient)
-  - **Recommendation**: Start with Hive for MVP, migrate to SQLite if complex queries needed
-
-- **Q3**: How to handle partial progress when app closes unexpectedly?
-  - **Options**:
-    - A) Save on every action (frequent I/O, battery drain)
-    - B) Save every 30 seconds (risk losing progress)
-    - C) Save on app pause/resume events (Flutter lifecycle)
-  - **Recommendation**: Option C (lifecycle-based saves) - balance between data safety and performance
-
-- **Q4**: What 3D modeling tool to use for creature parts?
-  - **Options**: Blender (free, steep curve), Vectary (browser, easier), Sketchfab (asset library)
-  - **Decision needed by**: Before Unity creature modeling session
-  - **Recommendation**: Start with Sketchfab free assets for MVP, learn Blender for custom parts later
-
-### Current Blockers
-- ❌ None
-
-### Resolved Blockers (Recent)
-- ✅ NDK version mismatch (resolved: installed both 23.1.7779620 and 27.0.12077973 side-by-side)
-- ✅ Docker GPU driver issues (resolved: switched to native Windows development)
-- ✅ MVP scope ambiguity (resolved: confirmed no AI chat, local storage only)
-
----
-
-## 📊 MVP Progress Tracker
-**Overall Completion**: ~20% (2 of 8 core features have working POCs)
-
-| Feature | Status | Priority | Est. Time | Notes |
-|---------|--------|----------|-----------|-------|
-| **Flutter-Unity Bridge** | ✅ Done | P0 | - | Color demo working on device |
-| **Documentation System** | ✅ Done | P1 | - | Docs + /update-docs command complete |
-| **Local Supabase Backend** | 🚧 In Progress | P0 | 1-2h remaining | Running locally, schema design next |
-| **Manual Habit Logging** | 📋 Not Started | P0 | 3-4h | After data layer exists |
-| **XP Calculation Logic** | 📋 Not Started | P0 | 2-3h | BLoC pattern planned |
-| **Unity Creature (Basic)** | 📋 Not Started | P0 | 4-6h | Rayman-style modular architecture |
-| **Shader System (Glow)** | 📋 Not Started | P1 | 2-3h | After creature model exists |
-| **AI Vision (ML Kit)** | 📋 Not Started | P2 | 4-6h | After manual logging works |
-
-**Legend**:
-- P0 = Critical for MVP (blocks other features)
-- P1 = Important but not blocking
-- P2 = Nice-to-have for MVP
-
----
-
-## 🗓️ Session History
-
-| Date | Duration | Focus | Outcome |
-|------|----------|-------|---------|
-| 2024-12-22 | 2h | Local Supabase integration + /update-docs command | ✅ Backend running, environment config complete |
-| 2025-12-22 | 3h | Documentation system design + MVP planning | ✅ Docs infrastructure 80% complete |
-| 2025-12-21 | 3h | Flutter-Unity bridge validation | ✅ POC working on physical device |
-| 2025-12-20 | 1h | Initial project setup | ✅ Project scaffold created |
-
-**Total time invested**: 9 hours
-**Estimated time to MVP**: ~25-35 hours remaining
-
----
-
-## 🎯 MVP Completion Criteria (Definition of Done)
-
-The MVP is considered complete when:
-1. ✅ User can log 3 types of habits manually (buttons for Squats/Reading/Meditation)
-2. ✅ XP is calculated and persisted locally (survives app restart)
-3. ✅ 3D creature in Unity displays glow intensity based on XP levels
-4. ✅ Creature evolves (swaps body part models) when tier thresholds are crossed
-5. ✅ AI Vision validates at least 1 activity type (e.g., squat counting with pose detection)
-6. ✅ App builds and runs on physical Android device without crashes
-7. ✅ Core documentation exists (architecture, features, build instructions)
-
-**Out of scope for MVP**:
-- ❌ Cloud backend / multi-device sync
-- ❌ AI chat with creature (OpenAI integration)
-- ❌ Social features (visiting friends)
-- ❌ Authentication system
-- ❌ Multiple creature types or customization
-
----
-
-## 📈 Velocity Tracking
-
-**Current Sprint Velocity**: ~2-3 hours per session, 1-2 sessions per week
-**Burn-down rate**: Completing ~1-2 P0 features per week
-
-**Projected MVP completion**: 3-4 weeks from now (mid-to-late January 2025)
-
----
-
-## 💡 Ideas Parking Lot (Future Enhancements)
-
-Ideas that came up during development but are deferred post-MVP:
-
-1. **Multiple creature types**: Let user choose alien species (different evolution paths)
-2. **Streak bonuses**: Extra XP for consecutive days of habits
-3. **Achievements system**: Badges for milestones (100 squats, 7-day streak, etc.)
-4. **Background animations**: Creature idles, reacts to user presence via camera
-5. **Sound effects**: Audio feedback on XP gain, evolution animations
-6. **Widget support**: Home screen widget showing creature state
-7. **Dark mode**: Theme toggle (creature could change colors based on theme)
-8. **Export data**: CSV export of habit history for external analysis
-
----
-
-## 🔗 Related Documentation
-
-- `docs/architecture.md` - Technical system design
-- `docs/changelog.md` - Session history and change log
-- `docs/features/` - Individual feature documentation
-- `CLAUDE.md` - AI assistant instructions and build commands
-- `README.md` - Project overview and setup instructions
-- `project_spec.md.md` - Product requirements and user stories
+| Date | Focus | Files Changed | Status |
+|------|-------|---------------|--------|
+| 2025-12-24 | Phase 2 UI/UX | 18 new + 2 modified | ✅ Complete (needs bug fixes) |
+| 2024-12-23 | Phase 1 Data Layer | 13 new files | ✅ Complete |
+| 2024-12-22 | Architecture & Docs | 8 docs + agents.md | ✅ Complete |
+| 2024-12-22 | Supabase Integration | 5 files | ✅ Complete |
+| 2025-12-21 | Flutter-Unity POC | 3 files | ✅ Complete |
+| 2025-12-20 | Project Setup | Initial scaffold | ✅ Complete |
